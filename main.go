@@ -2,28 +2,35 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
 	"github.com/russross/blackfriday"
 )
 
+type Satellites_stru struct {
+	Satellites []struct {
+		Name     string   `json:"name"`
+		Distance float32  `json:"distance"`
+		Message  []string `json:"message"`
+	} `json:"satellites"`
+}
+
 func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		log.Fatal("$PORT must be set")
+		port = "5000"
+		//log.Fatal("$PORT must be set")
 	}
 
 	tStr := os.Getenv("REPEAT")
-	repeat, err := strconv.Atoi(tStr)
-	if err != nil {
-		log.Printf("Error converting $REPEAT to an int: %q - Using default\n", err)
-		repeat = 5
+	if tStr == "" {
+		tStr = "2"
 	}
 
 	router := gin.New()
@@ -39,33 +46,24 @@ func main() {
 		c.String(http.StatusOK, string(blackfriday.Run([]byte("**hi!**"))))
 	})
 
-	router.GET("/repeat", repeatHandler(repeat))
-	router.POST("/upload", repeatHandler(repeat))
-	router.POST("/topsecret", tratarTreta())
+	router.POST("/topsecret", topSecretCall)
 
 	router.Run(":" + port)
 }
 
-func tratarTreta() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var buffer bytes.Buffer
+func topSecretCall(c *gin.Context) {
+	decoder := json.NewDecoder(c.Request.Body)
 
-		buffer.WriteString("Tratar Treta")
+	var t Satellites_stru
+	err := decoder.Decode(&t)
 
-		c.String(http.StatusOK, buffer.String())
+	if err != nil {
+		panic(err)
 	}
 
-}
+	log.Println(t.Satellites[1].Message[1])
 
-func repeatHandler(r int) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var buffer bytes.Buffer
-		for i := 0; i < r; i++ {
-			buffer.WriteString("Hello from Go!\n")
-		}
-		c.String(http.StatusOK, buffer.String())
-	}
-
+	c.JSON(http.StatusOK, gin.H{"data": t.Satellites[1].Name})
 }
 
 /*
