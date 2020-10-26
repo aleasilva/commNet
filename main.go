@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
@@ -20,10 +22,16 @@ type Satellites_stru struct {
 	} `json:"satellites"`
 }
 
+type DirectMessage struct {
+	Distance float32  `json:"distance"`
+	Message  []string `json:"message"`
+}
+
 func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
+		log.Println("$PORT must be set")
 		port = "5000"
 		//log.Fatal("$PORT must be set")
 	}
@@ -47,6 +55,7 @@ func main() {
 	})
 
 	router.POST("/topsecret", topSecretCall)
+	router.POST("/topsecret_split/:satellite_name", topSecret_split)
 
 	router.Run(":" + port)
 }
@@ -63,7 +72,27 @@ func topSecretCall(c *gin.Context) {
 
 	log.Println(t.Satellites[1].Message[1])
 
-	c.JSON(http.StatusOK, gin.H{"data": t.Satellites[1].Name})
+	c.JSON(http.StatusOK, gin.H{"data": t.Satellites[0].Name})
+}
+
+func topSecret_split(c *gin.Context) {
+
+	decoder := json.NewDecoder(c.Request.Body)
+	satellite_name := strings.TrimPrefix(c.Request.URL.Path, "/topsecret_split/")
+
+	fmt.Printf(satellite_name)
+
+	var t DirectMessage
+	err := decoder.Decode(&t)
+
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println(t.Message[0])
+
+	c.JSON(http.StatusOK, gin.H{"data": t.Distance})
+
 }
 
 /*
