@@ -117,15 +117,27 @@ func GetLocation(distances ...float32) (x, y float32) {
 */
 func GetMessage(messages ...[]string) (msg string) {
 	var buffer bytes.Buffer
+	var retMsg [5]string
+
 	//Descobrir a maior matriz
 	//Criar uma nova matriz para suportar as mensagens
+	retMsg[0] = "Alexandre"
 
 	//Lendo os transmissores
 	for i := 0; i < len(messages); i++ {
+
 		//Lendo as mensagens
 		for x := 0; x < len(messages[i]); x++ {
-			buffer.WriteString(messages[i][x])
+			if messages[i][x] != "" {
+				retMsg[x] = messages[i][x]
+			}
+
 		}
+	}
+
+	//Montado a mensagem para retorno
+	for line := 0; line < len(retMsg); line++ {
+		buffer.WriteString(retMsg[line] + " ")
 	}
 
 	return buffer.String()

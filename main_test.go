@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 
 	_ "github.com/heroku/x/hmetrics/onload"
@@ -14,10 +13,9 @@ func TestGetMessage(t *testing.T) {
 
 	gotMsg := GetMessage(strMsg1, strMsg2, strMsg3)
 
-	if gotMsg == "Ale" {
-		t.Error("Ocorreu um erro!")
+	if gotMsg != "este es un mensaje secreto " {
+		t.Error("Ocorreu um erro no método GetMessage...")
 	}
-	fmt.Println(gotMsg)
 
 }
 
@@ -30,9 +28,17 @@ func TestGetMessage2(t *testing.T) {
 		args    args
 		wantMsg string
 	}{
-
-		// TODO: Add test cases.
+		{
+			name: "Teste 1",
+			args: args{messages: [][]string{
+				{"este", "", "", "mensaje", ""},
+				{"", "es", "", "", "secreto"},
+				{"este", "", "un", "", ""},
+			}},
+			wantMsg: "este es un mensaje secreto ",
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if gotMsg := GetMessage(tt.args.messages...); gotMsg != tt.wantMsg {
