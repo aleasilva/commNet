@@ -1,3 +1,9 @@
+// Copyright inSSoft Corp.
+// All Rights Reserved
+//
+// Classe responsavel por receber as requisições para realizar o processamento.
+// Author : Alexandre.
+
 package main
 
 import (
@@ -14,7 +20,8 @@ import (
 	"github.com/russross/blackfriday"
 )
 
-type Satellites_stru struct {
+//SatellitesStru = Estrutura para realizar o parser do json recebido para processamento.
+type SatellitesStru struct {
 	Satellites []struct {
 		Name     string   `json:"name"`
 		Distance float32  `json:"distance"`
@@ -22,6 +29,7 @@ type Satellites_stru struct {
 	} `json:"satellites"`
 }
 
+//DirectMessage = Estrutura para armazenamento das mensagens
 type DirectMessage struct {
 	Distance float32  `json:"distance"`
 	Message  []string `json:"message"`
@@ -55,7 +63,7 @@ func main() {
 	})
 
 	router.POST("/topsecret", topSecretCall)
-	router.POST("/topsecret_split/:satellite_name", topSecret_split)
+	router.POST("/topsecret_split/:satellite_name", topSecretSplit)
 
 	router.Run(":" + port)
 }
@@ -63,7 +71,7 @@ func main() {
 func topSecretCall(c *gin.Context) {
 	decoder := json.NewDecoder(c.Request.Body)
 
-	var t Satellites_stru
+	var t SatellitesStru
 	err := decoder.Decode(&t)
 
 	if err != nil {
@@ -75,12 +83,13 @@ func topSecretCall(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": t.Satellites[0].Name})
 }
 
-func topSecret_split(c *gin.Context) {
+//topSecretSplit = Faz a separação da mensagem recebida
+func topSecretSplit(c *gin.Context) {
 
 	decoder := json.NewDecoder(c.Request.Body)
-	satellite_name := strings.TrimPrefix(c.Request.URL.Path, "/topsecret_split/")
+	satelliteName := strings.TrimPrefix(c.Request.URL.Path, "/topsecret_split/")
 
-	fmt.Printf(satellite_name)
+	fmt.Printf(satelliteName)
 
 	var t DirectMessage
 	err := decoder.Decode(&t)
@@ -95,9 +104,7 @@ func topSecret_split(c *gin.Context) {
 
 }
 
-/*
-	Retorna as posicao do satelite, recebendo a posicao da mensagem
-*/
+//GetLocation =	Retorna as posicao do satelite, recebendo a posicao da mensagem
 func GetLocation(distances ...float32) (x, y float32) {
 
 	if distances[0] > -499 && distances[1] < 201 {
@@ -112,9 +119,7 @@ func GetLocation(distances ...float32) (x, y float32) {
 
 }
 
-/*
-	Lendo o conteudo da mensagem
-*/
+//GetMessage =	Lendo o conteudo da mensagem
 func GetMessage(messages ...[]string) (msg string) {
 	var buffer bytes.Buffer
 	var retMsg [5]string
