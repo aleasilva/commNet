@@ -42,7 +42,7 @@ func TopSecretSplit(c *gin.Context) {
 
 	log.Println(t.Message[0])
 
-	c.JSON(http.StatusOK, gin.H{"data": t.Distance})
+	c.JSON(http.StatusOK, gin.H{"dataNew": t.Distance})
 }
 
 //TopSecretCall = Process secrets Call from ours ships
