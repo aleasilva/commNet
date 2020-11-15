@@ -2,7 +2,7 @@
 // All Rights Reserved
 //
 // Program responsable for process the requests from
-// our bases around the space
+// our bases around the space.
 // Author : Alexandre.
 
 package main
@@ -45,6 +45,7 @@ func main() {
 		c.String(http.StatusOK, string(blackfriday.Run([]byte("**hi!**"))))
 	})
 
+	//Router for the service requested.
 	router.POST("/topsecret", controller.TopSecretCall)
 	router.POST("/topsecret_split/:satellite_name", controller.TopSecretSplit)
 

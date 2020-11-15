@@ -10,14 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//DirectMessage = Estrutura para armazenamento das mensagens
+//DirectMessage = Save messages
 type DirectMessage struct {
 	Distance float32  `json:"distance"`
-	Message  []string `json:"message"`
+	Messages []string `json:"message"`
 }
 
-//SatellitesStru = Estrutura para realizar o parser do json recebido para processamento.
-type SatellitesStru struct {
+//MessageProtocolStru = Used to parse json request with the message
+// to be verified
+type MessageProtocolStru struct {
 	Satellites []struct {
 		Name     string   `json:"name"`
 		Distance float32  `json:"distance"`
@@ -25,12 +26,21 @@ type SatellitesStru struct {
 	} `json:"satellites"`
 }
 
-//TopSecretSplit = Faz a separação da mensagem recebida
+type topSecretResponse struct {
+	Message  string
+	Position *position
+}
+
+type position struct {
+	X float32
+	Y float32
+}
+
+//TopSecretSplit = Split the received messages
 func TopSecretSplit(c *gin.Context) {
 
 	decoder := json.NewDecoder(c.Request.Body)
 	satelliteName := strings.TrimPrefix(c.Request.URL.Path, "/topsecret_split/")
-
 	fmt.Printf(satelliteName)
 
 	var t DirectMessage
@@ -40,7 +50,7 @@ func TopSecretSplit(c *gin.Context) {
 		panic(err)
 	}
 
-	log.Println(t.Message[0])
+	log.Println(t.Messages[0])
 
 	c.JSON(http.StatusOK, gin.H{"dataNew": t.Distance})
 }
@@ -49,14 +59,26 @@ func TopSecretSplit(c *gin.Context) {
 func TopSecretCall(c *gin.Context) {
 	decoder := json.NewDecoder(c.Request.Body)
 
-	var t SatellitesStru
-	err := decoder.Decode(&t)
+	var message MessageProtocolStru
+	decoderResult := decoder.Decode(&message)
 
-	if err != nil {
-		panic(err)
+	if decoderResult != nil {
+		panic(decoderResult)
 	}
 
-	log.Println(t.Satellites[1].Message[1])
+	log.Println(message.Satellites[1].Message[1])
 
-	c.JSON(http.StatusOK, gin.H{"dataNew": t.Satellites[0].Name})
+	//Prepare response
+	position := position{
+		X: 10,
+		Y: 15,
+	}
+
+	reponse := topSecretResponse{
+		Message:  "Message Response",
+		Position: &position,
+	}
+
+	c.JSON(http.StatusOK, reponse)
+
 }
