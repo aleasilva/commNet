@@ -20,8 +20,8 @@ func TestGetLocation(t *testing.T) {
 		{
 			name:  "Test Get Location",
 			args:  args{distances: []float32{100, 115.5, 142.7}},
-			wantX: 2158.0815,
-			wantY: -2558.356,
+			wantX: -487.28647,
+			wantY: 1557.0161,
 		},
 	}
 

@@ -34,9 +34,9 @@ func GetMessage(messages ...[]string) (msg string) {
 //GetLocation =	Get the emissor position given the distance
 //Reference = https://www.researchgate.net/post/Does-anyone-have-Trilateration-java-code
 func GetLocation(distances ...float32) (x, y float32) {
-	const P1 = 0
-	const P2 = 1
-	const P3 = 2
+	const Sindex1 = 0
+	const Sindex2 = 1
+	const Sindex3 = 2
 
 	satPos := []struct {
 		name string
@@ -48,52 +48,53 @@ func GetLocation(distances ...float32) (x, y float32) {
 			name: "Kenobi",
 			pLat: -500,
 			pLon: -200,
-			dist: distances[P1],
+			dist: distances[Sindex1],
 		},
 		{
 			name: "Skywalker",
 			pLat: 100,
 			pLon: -100,
-			dist: distances[P2],
+			dist: distances[Sindex2],
 		},
 		{
 			name: "Sato",
 			pLat: 500,
 			pLon: 100,
-			dist: distances[P3],
+			dist: distances[Sindex3],
 		},
 	}
 
 	//Start the Trilateration Calc
-	xDist := math.Pow(float64(satPos[P1].pLon-satPos[P2].pLon), 2) + math.Pow(float64(satPos[P1].pLat-satPos[P2].pLat), 2)
-	d := float32(math.Sqrt(xDist))
+	tmpDistAtoB := math.Pow(float64(satPos[Sindex1].pLon-satPos[Sindex2].pLon), 2) + math.Pow(float64(satPos[Sindex1].pLat-satPos[Sindex2].pLat), 2)
+	distAtoB := float32(math.Sqrt(tmpDistAtoB))
 
-	ex := []float32{
-		(satPos[P2].pLat - satPos[P1].pLat) / d,
-		(satPos[P2].pLon - satPos[P1].pLon) / d,
+	distAtoBCart := []float32{
+		(satPos[Sindex2].pLat - satPos[Sindex1].pLat) / distAtoB,
+		(satPos[Sindex2].pLon - satPos[Sindex1].pLon) / distAtoB,
 	}
 
-	p3p1 := []float32{
-		satPos[P3].pLat - satPos[P1].pLat,
-		satPos[P3].pLon - satPos[P1].pLon,
+	distP3P1 := []float32{
+		satPos[Sindex3].pLat - satPos[Sindex1].pLat,
+		satPos[Sindex3].pLon - satPos[Sindex1].pLon,
 	}
 
-	ival := ex[0]*p3p1[0] + ex[1] + p3p1[1]
+	ival := (distAtoBCart[0] * distP3P1[0]) + (distAtoBCart[1] * distP3P1[1])
 
-	t1 := float64((satPos[P3].pLat - satPos[P1].pLat) - (ex[0] * ival))
-	t2 := float64((satPos[P3].pLon - satPos[P1].pLon) - (ex[1] * ival))
-	p3p1i := math.Pow(t1, 2) + math.Pow(t2, 2)
+	dist1 := float64((satPos[Sindex3].pLat - satPos[Sindex1].pLat) - (distAtoBCart[0] * ival))
+	dist2 := float64((satPos[Sindex3].pLon - satPos[Sindex1].pLon) - (distAtoBCart[1] * ival))
+	sumP3P1 := math.Pow(dist1, 2) + math.Pow(dist2, 2)
 
-	ey := []float32{float32(t1 / math.Sqrt(p3p1i)), float32(t2 / math.Sqrt(p3p1i))}
+	distLong := []float32{float32(dist1 / math.Sqrt(sumP3P1)), float32(dist2 / math.Sqrt(sumP3P1))}
 
-	jval := (ey[0] * p3p1[0]) + (ey[1] * p3p1[1])
+	sumDist := (distLong[0] * distP3P1[0]) + (distLong[1] * distP3P1[1])
 
-	xval := (math.Pow(float64(satPos[P1].dist), 2) - math.Pow(float64(satPos[P2].dist), 2)) + math.Pow(float64(d), 2)/float64((2*d))
-	yval := ((math.Pow(float64(satPos[P1].dist), 2)-math.Pow(float64(satPos[P3].dist), 2))+math.Pow(float64(ival), 2)+math.Pow(float64(jval), 2))/
-		float64((2*jval)) - (float64(ival/jval) * xval)
+	valX := (math.Pow(float64(satPos[Sindex1].dist), 2) - math.Pow(float64(satPos[Sindex2].dist), 2) +
+		math.Pow(float64(distAtoB), 2)) / float64((2 * distAtoB))
+	valY := ((math.Pow(float64(satPos[Sindex1].dist), 2)-math.Pow(float64(satPos[Sindex3].dist), 2))+
+		math.Pow(float64(ival), 2)+math.Pow(float64(sumDist), 2))/float64((2*sumDist)) - (float64(ival/sumDist) * valX)
 
-	posx := satPos[P1].pLat + (ex[0] * float32(xval)) + (ey[0] * float32(yval))
-	posy := satPos[P1].pLon + (ex[1] * float32(xval)) + (ey[1] * float32(yval))
+	posx := satPos[Sindex1].pLat + (distAtoBCart[0] * float32(valX)) + (distLong[0] * float32(valY))
+	posy := satPos[Sindex1].pLon + (distAtoBCart[1] * float32(valX)) + (distLong[1] * float32(valY))
 
 	return posx, posy
 }
