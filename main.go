@@ -16,17 +16,12 @@ import (
 )
 
 func main() {
+	//Recover port from OS.
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		log.Println("$PORT must be set")
 		port = "5000"
-		//log.Fatal("$PORT must be set")
-	}
-
-	tStr := os.Getenv("REPEAT")
-	if tStr == "" {
-		tStr = "2"
+		log.Println("$PORT must be set, on os system, check heroku to see how.")
 	}
 
 	router := controller.SetupServer()
