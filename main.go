@@ -9,13 +9,10 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/heroku/go-getting-started/api/controller"
 	_ "github.com/heroku/x/hmetrics/onload"
-	"github.com/russross/blackfriday"
 )
 
 func main() {
@@ -32,22 +29,7 @@ func main() {
 		tStr = "2"
 	}
 
-	router := gin.New()
-	router.Use(gin.Logger())
-	router.LoadHTMLGlob("templates/*.tmpl.html")
-	router.Static("/static", "static")
-
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl.html", nil)
-	})
-
-	router.GET("/mark", func(c *gin.Context) {
-		c.String(http.StatusOK, string(blackfriday.Run([]byte("**hi!**"))))
-	})
-
-	//Router for the service requested.
-	router.POST("/topsecret", controller.TopSecretCall)
-	router.POST("/topsecret_split/:satellite_name", controller.TopSecretSplit)
+	router := controller.SetupServer()
 
 	router.Run(":" + port)
 }

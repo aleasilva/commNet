@@ -56,8 +56,8 @@ func TopSecretSplit(c *gin.Context) {
 }
 
 //TopSecretCall = Process secrets Call from ours ships
-func TopSecretCall(c *gin.Context) {
-	decoder := json.NewDecoder(c.Request.Body)
+func TopSecretCall(context *gin.Context) {
+	decoder := json.NewDecoder(context.Request.Body)
 
 	var message MessageProtocolStru
 	decoderResult := decoder.Decode(&message)
@@ -79,6 +79,13 @@ func TopSecretCall(c *gin.Context) {
 		Position: &position,
 	}
 
-	c.JSON(http.StatusOK, reponse)
+	context.JSON(http.StatusOK, reponse)
 
+}
+
+//PingEndpoint = Response I am alive, for the client.
+func PingEndpoint(context *gin.Context) {
+	context.JSON(200, gin.H{
+		"message": "pong",
+	})
 }

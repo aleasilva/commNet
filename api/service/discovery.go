@@ -32,10 +32,11 @@ func GetMessage(messages ...[]string) (msg string) {
 }
 
 //GetLocation =	Get the emissor position given the distance
+//Reference = https://www.researchgate.net/post/Does-anyone-have-Trilateration-java-code
 func GetLocation(distances ...float32) (x, y float32) {
-	P1 := 0
-	P2 := 1
-	P3 := 2
+	const P1 = 0
+	const P2 = 1
+	const P3 = 2
 
 	satPos := []struct {
 		name string
@@ -63,6 +64,7 @@ func GetLocation(distances ...float32) (x, y float32) {
 		},
 	}
 
+	//Start the Trilateration Calc
 	xDist := math.Pow(float64(satPos[P1].pLon-satPos[P2].pLon), 2) + math.Pow(float64(satPos[P1].pLat-satPos[P2].pLat), 2)
 	d := float32(math.Sqrt(xDist))
 

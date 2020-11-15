@@ -1,0 +1,24 @@
+mode: set
+github.com/heroku/go-getting-started/api/controller/core.go:40.37,49.16 6 0
+github.com/heroku/go-getting-started/api/controller/core.go:53.2,55.53 2 0
+github.com/heroku/go-getting-started/api/controller/core.go:49.16,50.13 1 0
+github.com/heroku/go-getting-started/api/controller/core.go:59.36,65.26 4 0
+github.com/heroku/go-getting-started/api/controller/core.go:69.2,82.32 4 0
+github.com/heroku/go-getting-started/api/controller/core.go:65.26,66.23 1 0
+github.com/heroku/go-getting-started/main.go:21.13,24.16 2 0
+github.com/heroku/go-getting-started/main.go:30.2,31.16 2 0
+github.com/heroku/go-getting-started/main.go:35.2,40.39 5 0
+github.com/heroku/go-getting-started/main.go:44.2,44.43 1 0
+github.com/heroku/go-getting-started/main.go:49.2,52.24 3 0
+github.com/heroku/go-getting-started/main.go:24.16,28.3 2 0
+github.com/heroku/go-getting-started/main.go:31.16,33.3 1 0
+github.com/heroku/go-getting-started/main.go:40.39,42.3 1 0
+github.com/heroku/go-getting-started/main.go:44.43,46.3 1 0
+github.com/heroku/go-getting-started/api/service/discovery.go:11.52,16.58 3 1
+github.com/heroku/go-getting-started/api/service/discovery.go:27.2,27.44 1 1
+github.com/heroku/go-getting-started/api/service/discovery.go:31.2,31.24 1 1
+github.com/heroku/go-getting-started/api/service/discovery.go:16.58,18.66 1 1
+github.com/heroku/go-getting-started/api/service/discovery.go:18.66,19.41 1 1
+github.com/heroku/go-getting-started/api/service/discovery.go:19.41,21.5 1 1
+github.com/heroku/go-getting-started/api/service/discovery.go:27.44,29.3 1 1
+github.com/heroku/go-getting-started/api/service/discovery.go:36.55,99.2 19 1
