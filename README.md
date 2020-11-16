@@ -1,48 +1,66 @@
 
-# go-getting-started
+# commNet
 
-A barebones Go app, which can easily be deployed to Heroku.
+    CommNet is a application to recover the source and the content of distress call message. 
 
-This application supports the [Getting Started with Go on Heroku](https://devcenter.heroku.com/articles/getting-started-with-go) article - check it out.
+    This application supports the [Getting Started with Go on Heroku](https://devcenter.heroku.com/articles/getting-started-with-go) article - check it out.
 
 ## Running Locally
 
-Make sure you have [Go](http://golang.org/doc/install) version 1.12 or newer and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
+    Make sure you have [Go](http://golang.org/doc/install) version 1.12 or newer and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
 
-```sh
-$ git clone https://github.com/heroku/go-getting-started.git
-$ cd go-getting-started
-$ go build -o bin/go-getting-started -v . # or `go build -o bin/go-getting-started.exe -v .` in git bash
-github.com/mattn/go-colorable
-gopkg.in/bluesuncorp/validator.v5
-golang.org/x/net/context
-github.com/heroku/x/hmetrics
-github.com/gin-gonic/gin/render
-github.com/manucorporat/sse
-github.com/heroku/x/hmetrics/onload
-github.com/gin-gonic/gin/binding
-github.com/gin-gonic/gin
-github.com/heroku/go-getting-started
-$ heroku local
-```
+    ```sh
+    $ git clone https://github.com/heroku/go-getting-started.git
+    $ cd go-getting-started
+    $ go build -o bin/go-getting-started -v 
+    $ heroku local
+    ```
+    Your app should now be running on [localhost:5000](http://localhost:5000/).
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+## Running from Heroku
+    This instrucions is for running the application direct from heroku.
+    You can test application using curl or graphic interface like [postman](https://www.postman.com/)
 
-## Deploying to Heroku
+### Check that the server is running:
+    First step is certify that app is running for this call [ping](https://comm-net.herokuapp.com/ping).
+    After few seconds the server will response a json like this: {"message": "pong"}
 
-```sh
-$ heroku create
-$ git push heroku main
-$ heroku open
-```
+### Retrieving a message:
+    After checkin tha app is runnig is time to recover the messa sent, for this you can use [topSecret](https://comm-net.herokuapp.com/topsecret)
+ 
+    This shoud be a post message, don´t forget to set the Header Content-Type = application/json.
+    The protocol for this comm should be like something like this:
+    Request:    
+            {
+            "satellites":[ 
+                {
+                    "name": "kenobi",
+                    "distance": 100.0,
+                    "message": ["este", "", "", "mensaje", ""]                       
+                },
+                {
+                    "name": "skywalker",  
+                    "distance": 115.5,
+                    "message": ["", "es", "", "", "secreto"]
+                },
+                {
+                    "name": "sato",  
+                    "distance": 142.7,
+                    "message": ["este", "", "un", "", ""]
+                }
+                ]
+            }
 
-or
+    After ours system process the instructions you shoud see the answer some like this:
+      
+      Response:
+        {
+            "Message": "Message Response",
+            "Position": {
+                "X": 10,
+                "Y": 15
+            }
+        } 
+
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
-
-## Documentation
-
-For more information about using Go on Heroku, see these Dev Center articles:
-
-- [Go on Heroku](https://devcenter.heroku.com/categories/go)

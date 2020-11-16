@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/heroku/go-getting-started/api/service"
 )
 
 //DirectMessage = Save messages
@@ -66,21 +67,45 @@ func TopSecretCall(context *gin.Context) {
 		panic(decoderResult)
 	}
 
-	log.Println(message.Satellites[1].Message[1])
+	//Recover the message
+	msgReturn := service.GetMessage(message.Satellites[0].Message,
+		message.Satellites[1].Message,
+		message.Satellites[2].Message)
+
+	//Recover the orgin of the message
+	locX, locY := service.GetLocation(getDistanceInOrder(message))
 
 	//Prepare response
 	position := position{
-		X: 10,
-		Y: 15,
+		X: locX,
+		Y: locY,
 	}
 
 	reponse := topSecretResponse{
-		Message:  "Message Response",
+		Message:  msgReturn,
 		Position: &position,
 	}
 
 	context.JSON(http.StatusOK, reponse)
 
+}
+
+//getDistanceInOrder Recover the distance from each sattelite based on name
+func getDistanceInOrder(message MessageProtocolStru) (dist01, dist02, dist03 float32) {
+
+	for satIndex := 0; satIndex < len(message.Satellites); satIndex++ {
+		satName := message.Satellites[satIndex].Name
+		satDist := message.Satellites[satIndex].Distance
+
+		if satName == "kenobi" {
+			dist01 = satDist
+		} else if satName == "skywalker" {
+			dist02 = satDist
+		} else if satName == "sato" {
+			dist03 = satDist
+		}
+	}
+	return dist01, dist02, dist03
 }
 
 //PingEndpoint = Response I am alive, for the client.
