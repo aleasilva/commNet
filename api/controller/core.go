@@ -2,8 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -14,7 +12,7 @@ import (
 //DirectMessage = Save messages
 type DirectMessage struct {
 	Distance float32  `json:"distance"`
-	Messages []string `json:"message"`
+	Message  []string `json:"message"`
 }
 
 //MessageProtocolStru = Used to parse json request with the message
@@ -38,22 +36,40 @@ type position struct {
 }
 
 //TopSecretSplit = Split the received messages
-func TopSecretSplit(c *gin.Context) {
+func TopSecretSplit(context *gin.Context) {
 
-	decoder := json.NewDecoder(c.Request.Body)
-	satelliteName := strings.TrimPrefix(c.Request.URL.Path, "/topsecret_split/")
-	fmt.Printf(satelliteName)
+	decoder := json.NewDecoder(context.Request.Body)
+	satelliteName := strings.TrimPrefix(context.Request.URL.Path, "/topsecret_split/")
 
-	var t DirectMessage
-	err := decoder.Decode(&t)
+	var directMsg DirectMessage
+	err := decoder.Decode(&directMsg)
 
 	if err != nil {
 		panic(err)
 	}
 
-	log.Println(t.Messages[0])
+	msgReturn := service.GetMessage(directMsg.Message)
 
-	c.JSON(http.StatusOK, gin.H{"dataNew": t.Distance})
+	//Recover the position of the sattlelite
+	//locX, locY := service.GetLocation(directMsg.Distance, directMsg.Distance, directMsg.Distance)
+
+	//Prepare response
+	position := position{
+		X: 0,
+		Y: 0,
+	}
+	position.X, position.Y = getSattelitePositionFromName(satelliteName)
+
+	if position.X == 0 && position.Y == 0 {
+		context.JSON(http.StatusBadRequest, "")
+	}
+
+	response := topSecretResponse{
+		Message:  msgReturn,
+		Position: &position,
+	}
+
+	context.JSON(http.StatusOK, response)
 }
 
 //TopSecretCall = Process secrets Call from ours ships
@@ -81,12 +97,12 @@ func TopSecretCall(context *gin.Context) {
 		Y: locY,
 	}
 
-	reponse := topSecretResponse{
+	response := topSecretResponse{
 		Message:  msgReturn,
 		Position: &position,
 	}
 
-	context.JSON(http.StatusOK, reponse)
+	context.JSON(http.StatusOK, response)
 
 }
 
@@ -94,14 +110,14 @@ func TopSecretCall(context *gin.Context) {
 func getDistanceInOrder(message MessageProtocolStru) (dist01, dist02, dist03 float32) {
 
 	for satIndex := 0; satIndex < len(message.Satellites); satIndex++ {
-		satName := message.Satellites[satIndex].Name
+		satName := strings.ToUpper(message.Satellites[satIndex].Name)
 		satDist := message.Satellites[satIndex].Distance
 
-		if satName == "kenobi" {
+		if satName == "KENOBI" {
 			dist01 = satDist
-		} else if satName == "skywalker" {
+		} else if satName == "SKYWALKER" {
 			dist02 = satDist
-		} else if satName == "sato" {
+		} else if satName == "SATO" {
 			dist03 = satDist
 		}
 	}
@@ -113,4 +129,44 @@ func PingEndpoint(context *gin.Context) {
 	context.JSON(200, gin.H{
 		"message": "pong",
 	})
+}
+
+//getSattelitePositionFromName = Retorna a posicao de um satellite baseado no nome
+func getSattelitePositionFromName(name string) (x, y float32) {
+
+	satPos := []struct {
+		name string
+		pLat float32
+		pLon float32
+		dist float32
+	}{
+		{
+			name: "KENOBI",
+			pLat: -500,
+			pLon: -200,
+		},
+		{
+			name: "SKYWALKER",
+			pLat: 100,
+			pLon: -100,
+		},
+		{
+			name: "SATO",
+			pLat: 500,
+			pLon: 100,
+		},
+	}
+
+	x = 0
+	y = 0
+
+	for _, v := range satPos {
+		if v.name == strings.ToUpper(name) {
+			x = v.pLat
+			y = v.pLon
+		}
+	}
+
+	return x, y
+
 }

@@ -78,10 +78,10 @@ func GetLocation(distances ...float32) (x, y float32) {
 		satPos[Sindex3].pLon - satPos[Sindex1].pLon,
 	}
 
-	ival := (distAtoBCart[0] * distP3P1[0]) + (distAtoBCart[1] * distP3P1[1])
+	iVal := (distAtoBCart[0] * distP3P1[0]) + (distAtoBCart[1] * distP3P1[1])
 
-	dist1 := float64((satPos[Sindex3].pLat - satPos[Sindex1].pLat) - (distAtoBCart[0] * ival))
-	dist2 := float64((satPos[Sindex3].pLon - satPos[Sindex1].pLon) - (distAtoBCart[1] * ival))
+	dist1 := float64((satPos[Sindex3].pLat - satPos[Sindex1].pLat) - (distAtoBCart[0] * iVal))
+	dist2 := float64((satPos[Sindex3].pLon - satPos[Sindex1].pLon) - (distAtoBCart[1] * iVal))
 	sumP3P1 := math.Pow(dist1, 2) + math.Pow(dist2, 2)
 
 	distLong := []float32{float32(dist1 / math.Sqrt(sumP3P1)), float32(dist2 / math.Sqrt(sumP3P1))}
@@ -91,10 +91,10 @@ func GetLocation(distances ...float32) (x, y float32) {
 	valX := (math.Pow(float64(satPos[Sindex1].dist), 2) - math.Pow(float64(satPos[Sindex2].dist), 2) +
 		math.Pow(float64(distAtoB), 2)) / float64((2 * distAtoB))
 	valY := ((math.Pow(float64(satPos[Sindex1].dist), 2)-math.Pow(float64(satPos[Sindex3].dist), 2))+
-		math.Pow(float64(ival), 2)+math.Pow(float64(sumDist), 2))/float64((2*sumDist)) - (float64(ival/sumDist) * valX)
+		math.Pow(float64(iVal), 2)+math.Pow(float64(sumDist), 2))/float64((2*sumDist)) - (float64(iVal/sumDist) * valX)
 
-	posx := satPos[Sindex1].pLat + (distAtoBCart[0] * float32(valX)) + (distLong[0] * float32(valY))
-	posy := satPos[Sindex1].pLon + (distAtoBCart[1] * float32(valX)) + (distLong[1] * float32(valY))
+	posX := satPos[Sindex1].pLat + (distAtoBCart[0] * float32(valX)) + (distLong[0] * float32(valY))
+	posY := satPos[Sindex1].pLon + (distAtoBCart[1] * float32(valX)) + (distLong[1] * float32(valY))
 
-	return posx, posy
+	return posX, posY
 }

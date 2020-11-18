@@ -26,6 +26,23 @@ func TestTopSecretSplit(test *testing.T) {
 		test.Fatalf("Expected no error, got %v", err)
 	}
 
+	if resp.StatusCode != 400 {
+		test.Fatalf("Expected status code 400, got %v", resp.StatusCode)
+	}
+
+	//Test error 200
+	req, err = http.NewRequest("POST", testServer.URL+"/topsecret_split/skywalker",
+		bytes.NewBuffer(creatTopSecretSplitMessage()))
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client = &http.Client{}
+	resp, err = client.Do(req)
+
+	if err != nil {
+		test.Fatalf("Expected no error, got %v", err)
+	}
+
 	if resp.StatusCode != 200 {
 		test.Fatalf("Expected status code 200, got %v", resp.StatusCode)
 	}

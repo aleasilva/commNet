@@ -64,3 +64,15 @@
 
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
+## Report tests coverage
+github.com/heroku/go-getting-started/api/controller/core.go:39:         TopSecretSplit                  92.3%
+github.com/heroku/go-getting-started/api/controller/core.go:76:         TopSecretCall                   90.0%
+github.com/heroku/go-getting-started/api/controller/core.go:110:        getDistanceInOrder              100.0%
+github.com/heroku/go-getting-started/api/controller/core.go:128:        PingEndpoint                    100.0%
+github.com/heroku/go-getting-started/api/controller/core.go:135:        getSattelitePositionFromName    100.0%
+github.com/heroku/go-getting-started/api/controller/router.go:8:        SetupServer                     100.0%
+github.com/heroku/go-getting-started/api/service/discovery.go:11:       GetMessage                      100.0%
+github.com/heroku/go-getting-started/api/service/discovery.go:36:       GetLocation                     100.0%
+github.com/heroku/go-getting-started/main.go:18:                        main                            100.0%
+total:                                                                  (statements)                    97.6%
